@@ -5,12 +5,16 @@ import java.util.List;
 
 public class Block implements Invariant {
 	public Block(List<Cell> cells) {
-		if (cells.size() != MAX_VALUE)
+		if (cells.size() != 9)
 			throw new IllegalArgumentException("An array must have 9 elements");
 		
 		this.cells = new Cell[9];
-		for (int i = 0; i < MAX_VALUE; ++i)
+		for (int i = 0; i < 9; ++i) {
 			this.cells[i] = cells.get(i);
+			this.cells[i].connect(this);
+		}
+		
+		state = BlockState.UNSOLVED;
 	}
 	
 	
@@ -38,6 +42,11 @@ public class Block implements Invariant {
 			cells[undefIndex].setValue(det);
 	}
 	
+	
+	public int getValue(int index) {
+		return cells[index].getValue();
+	}
+	
 	private Cell[] cells;
-	private static int MAX_VALUE;
+	private BlockState state;
 }
