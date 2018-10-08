@@ -1,6 +1,6 @@
 package sudoku;
 
-public class Cell extends CellValueEvent implements Invariant {
+public class Cell extends CellValueEvent {
 	
 	public Cell() {
 		value = 0;
@@ -29,8 +29,8 @@ public class Cell extends CellValueEvent implements Invariant {
 	}
 	
 	public void setValue(int someValue) {
-		if (value != 0)
-			throw new IllegalStateException("Value has been defined");
+		//if (value != 0)
+		//	throw new IllegalStateException("Value has been defined");
 		
 		if (someValue < 1 || someValue > MAX_VALUE)
 			throw new IllegalArgumentException("Value must be from 1 to 9");
@@ -56,7 +56,6 @@ public class Cell extends CellValueEvent implements Invariant {
 		return states[someValue - 1] == CellValueState.UNDEFINE;
 	}
 	
-	@Override
 	public void exclude(int excludeValue) {
 		if (excludeValue < 1 || excludeValue > MAX_VALUE)
 			throw new IllegalArgumentException("Value must be from 1 to 9");
@@ -65,11 +64,12 @@ public class Cell extends CellValueEvent implements Invariant {
 			states[excludeValue - 1] = CellValueState.DEFINE;
 			++defCount;
 		}
+		
+		if (defCount == 8)
+			attemptToDef();
 	}
 	
-	
-	@Override
-	public void attemptToDef() {
+	private void attemptToDef() {
 		if (hasValue() || defCount != 8)
 			return; 
 		

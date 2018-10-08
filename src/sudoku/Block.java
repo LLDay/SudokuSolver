@@ -1,52 +1,50 @@
 package sudoku;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 
-public class Block implements Invariant {
+public class Block {
+
 	public Block(List<Cell> cells) {
 		if (cells.size() != 9)
-			throw new IllegalArgumentException("An array must have 9 elements");
+			throw new IllegalArgumentException("A list must have 9 elements");
 		
-		this.cells = new Cell[9];
-		for (int i = 0; i < 9; ++i) {
-			this.cells[i] = cells.get(i);
-			this.cells[i].connect(this);
-		}
+		this.cells = cells;
 		
-		state = BlockState.UNSOLVED;
+		for (int i = 0; i < 9; ++i) 
+			this.cells.get(i).connect(this);
 	}
 	
 	
-	@Override
 	public void exclude(int excludeValue) {
-		for (int i = 0; i < cells.length; ++i) 
-			cells[i].exclude(excludeValue);
+		for (Cell it : cells)
+			it.exclude(excludeValue);
 	}
-	
-	@Override
-	public void attemptToDef() {
-		int countDef = 0;
-		int det = 362880; //factorial(9)
-		int undefIndex = -1;
-		
-		for (int i = 0; i < cells.length; ++i)
-			if (cells[i].hasValue()) {
-				countDef++;
-				det /= cells[i].getValue();
-			}
-			else
-				undefIndex = i;
-		
-		if (countDef == 8)
-			cells[undefIndex].setValue(det);
-	}
-	
 	
 	public int getValue(int index) {
-		return cells[index].getValue();
+		return cells.get(index).getValue();
 	}
 	
-	private Cell[] cells;
-	private BlockState state;
+	public boolean isSolved() {
+		int def = 39916800; //11!
+		for (Cell cell : cells)
+			if (cell.hasValue())
+				// exclude def /= 1
+				def /= (cell.getValue() + 1);
+		
+		return def == 1;
+	}
+	
+	public boolean isErr() {
+		Set<Integer> numSet = new TreeSet<>();
+		for (Cell cell : cells)
+			if (cell.hasValue())
+				numSet.add(cell.getValue());
+		
+		return numSet.size() != 9;
+	}
+	
+	private List<Cell> cells;
 }
