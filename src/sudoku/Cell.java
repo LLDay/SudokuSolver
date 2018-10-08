@@ -2,6 +2,12 @@ package sudoku;
 
 public class Cell extends CellValueEvent {
 	
+	public enum CellValueState {
+		DEFINE,
+		UNDEFINE
+	};
+
+	
 	public Cell() {
 		value = 0;
 		defCount = 0;

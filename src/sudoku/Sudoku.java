@@ -169,9 +169,13 @@ public class Sudoku {
 		return state;
 	}
 
+	public static void main(String[] str) 
+	{
+		
+	}
 	
 	@Override
-	public String toString() {
+ 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		
 		for (int i = 0; i < 9; ++i) {
