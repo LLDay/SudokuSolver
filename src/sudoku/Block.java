@@ -28,7 +28,7 @@ public class Block {
 	}
 	
 	public boolean isSolved() {
-		int def = 39916800; //11!
+		int def = 3628800; //10!
 		for (Cell cell : cells)
 			if (cell.hasValue())
 				// exclude def /= 1
@@ -38,12 +38,16 @@ public class Block {
 	}
 	
 	public boolean isErr() {
+		int allNumbers = 0;
+		
 		Set<Integer> numSet = new TreeSet<>();
 		for (Cell cell : cells)
-			if (cell.hasValue())
+			if (cell.hasValue()) {
 				numSet.add(cell.getValue());
+				allNumbers++;
+			}
 		
-		return numSet.size() != 9;
+		return numSet.size() != allNumbers;
 	}
 	
 	private List<Cell> cells;

@@ -48,6 +48,9 @@ public class Cell extends CellValueEvent {
 		return value;
 	}
 	
+	public int countUndef() {
+		return 9 - defCount;
+	}
 	
 	public boolean canBe(int someValue) {
 		if (hasValue() && someValue == value)
@@ -80,6 +83,10 @@ public class Cell extends CellValueEvent {
 			}
 	}
 	
+	@Override
+	public String toString() {
+		return new Integer(value).toString();
+	}
 	
 	private int value;
 	private int defCount;

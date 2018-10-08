@@ -14,12 +14,9 @@ public class Sudoku {
 
 	
 	public Sudoku() {
-		blocks  = new ArrayList<Block>();
-		cells 	= new Cell[81];		
-		rows 	= new Block[9];
-		columns	= new Block[9];
-		squares	= new Block[9];
-		state = SudokuState.UNSOLVED;
+		blocks = new ArrayList<Block>();
+		cells  = new Cell[81];		
+		state  = SudokuState.UNSOLVED;
 		
 		for (int i = 0; i < cells.length; i++)
 			cells[i] = new Cell();
@@ -42,21 +39,20 @@ public class Sudoku {
 				}
 			}
 			
-			Block rowBlock = new Block(rowList);
-			Block colBlock = new Block(columnList);
-			Block sqBlock  = new Block(squaresList);
+			blocks.add(new Block(rowList));
+			blocks.add(new Block(columnList));
 			
-			rows[i]    = rowBlock;
-			columns[i] = colBlock;
-			squares[i] = sqBlock;
+			// Cells save this block
+			new Block(squaresList);
 		}		
 	}
 	
 	public Sudoku(final Sudoku other) {
-		super();
+		this();
 		
 		for (int i = 0; i < 81; ++i)
-			this.cells[i] = other.get(i);
+			if (other.get(i).hasValue())
+				this.cells[i].setValue(other.get(i).getValue());
 	}
 	
 	
@@ -88,15 +84,91 @@ public class Sudoku {
 
 	
 	public void solve() {
-		while(state == SudokuState.UNSOLVED) {
-			
+		if (getState() != SudokuState.UNSOLVED)
+			return;
+		
+
+		int minCellCountUndef = 10;
+		int minCellIndex = -1;
+		
+		for (int i = 0; i < 81; ++i)
+			if (!cells[i].hasValue() && cells[i].countUndef() < minCellCountUndef) {
+				minCellCountUndef = cells[i].countUndef();
+				minCellIndex = i;
+				
+				if (minCellCountUndef == 2)
+					break;
+			}
+		
+		if (minCellIndex == -1) {
+			state = SudokuState.UNSOLVABLE;
+			return;
 		}
+			
+		List<Sudoku> sudokuList = new ArrayList<>();
+		for (int i = 1; i < 10; ++i)
+			if (cells[minCellIndex].canBe(i)) {
+				Sudoku subSudoku = new Sudoku(this);
+				subSudoku.set(minCellIndex, i);
+				subSudoku.solve();
+				sudokuList.add(subSudoku);
+				
+				if (subSudoku.getState() == SudokuState.MANY_SOLVES)
+					break;
+		}
+		
+		int sudokuSolves = 0;
+					
+		for (Sudoku sud : sudokuList) {
+			if (sud.getState() == SudokuState.MANY_SOLVES) {
+				this.state = SudokuState.MANY_SOLVES;
+				complete(sud);
+				return;
+			}
+			
+			if (sud.getState() == SudokuState.SOLVED) {
+				sudokuSolves++;
+				
+				if (state == SudokuState.UNSOLVED)
+					complete(sud);
+			}
+		}
+		
+		
+		if (sudokuSolves == 0)
+			state = SudokuState.UNSOLVABLE;
+		else if (sudokuSolves == 1)
+			state = SudokuState.SOLVED;
+		else 
+			state = SudokuState.MANY_SOLVES;
+	}
+	
+	public void complete(Sudoku other) {
+		for (int i = 0; i < 81; ++i)
+			if (!cells[i].hasValue())
+				cells[i].setValue(other.get(i).getValue());
 	}
 	
 	public SudokuState getState() {
+		if (state == SudokuState.UNSOLVED) {
+			int solvedBlocks = 0;
+			for (Block block : blocks) {
+				if (block.isSolved())
+					solvedBlocks++;
+				
+				if (block.isErr()) {
+					state = SudokuState.UNSOLVABLE;	
+					break;
+				}
+			}
+			
+			if (solvedBlocks == 18)
+				state = SudokuState.SOLVED;
+		}
+		
 		return state;
 	}
-		
+
 	
 	@Override
 	public String toString() {
@@ -104,41 +176,16 @@ public class Sudoku {
 		
 		for (int i = 0; i < 9; ++i) {
 			for (int j = 0; j < 9; ++j)
-				builder.append(rows[i].getValue(j));
+				builder.append(cells[i * 9 + j].getValue());
 			builder.append('\n');
 		}
 		
 		return builder.toString();
 	}
 	
-	public static void main(String[] args) {
-		String str = 
-				    "403002000"
-				  + "500060120"
-				  + "900000004"
-				  + "008070000"
-				  + "000203008"
-				  + "036000700"
-				  + "070920000"
-				  + "000005096"
-				  + "000804500";
-		
-		Sudoku sud = new Sudoku();
-		
-		for (int i = 0; i < 9; ++i)
-			for (int j = 0; j < 9; ++j) {
-				char ch = str.charAt(9 * i + j);
-				if (ch != '0')
-					sud.set(i, j, Character.getNumericValue(ch));
-			}
-	
-		System.out.println(sud.toString());
-	}
 	
 	private Cell[]  cells;
-	private Block[] rows;
-	private Block[] columns;
-	private Block[] squares;
 	private List<Block> blocks;
+	
 	private SudokuState state;
 }
