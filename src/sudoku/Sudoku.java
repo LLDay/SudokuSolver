@@ -101,62 +101,37 @@ public class Sudoku {
 	public void solve() {
 		if (getState() != SudokuState.UNSOLVED)
 			return;
-
-		int minCellCountUndef = 10;
-		int minCellIndex = -1;
+		
+		int firstCellIndex = -1;
 		
 		for (int i = 0; i < 81; ++i)
-			if (!cells[i].hasValue() && cells[i].countUndef() < minCellCountUndef) {
-				minCellCountUndef = cells[i].countUndef();
-				minCellIndex = i;
-				
-				if (minCellCountUndef == 2)
-					break;
+			if (!cells[i].hasValue()) {
+				firstCellIndex = i;
+				break;
 			}
+
 		
-		if (minCellIndex == -1) {
-			state = SudokuState.UNSOLVABLE;
-			return;
-		}
-			
-		List<Sudoku> sudokuList = new ArrayList<>();
 		for (int i = 1; i < 10; ++i)
-			if (cells[minCellIndex].canBe(i)) {
+			if (cells[firstCellIndex].canBe(i)) {
 				Sudoku subSudoku = new Sudoku(this);
 		
-				subSudoku.set(minCellIndex, i);
-				
+				subSudoku.set(firstCellIndex, i);
 				subSudoku.solve();
-				sudokuList.add(subSudoku);
 				
-				if (subSudoku.getState() == SudokuState.MANY_SOLVES)
-					break;
-		}
-		
-		int sudokuSolves = 0;
-					
-		for (Sudoku sud : sudokuList) {
-			if (sud.getState() == SudokuState.MANY_SOLVES) {
-				this.state = SudokuState.MANY_SOLVES;
-				complete(sud);
-				return;
+				if (subSudoku.getState() == SudokuState.SOLVED) 				
+					if (this.getState() == SudokuState.UNSOLVED) {
+						this.cells = subSudoku.cells;
+						this.blocks = subSudoku.blocks;
+						this.state = subSudoku.state;
+					}
+					else {
+						this.state = SudokuState.MANY_SOLVES;
+						break;
+					}
 			}
-			
-			if (sud.getState() == SudokuState.SOLVED) {
-				sudokuSolves++;
-				
-				if (state == SudokuState.UNSOLVED)
-					complete(sud);
-			}
-		}
 		
-		
-		if (sudokuSolves == 0)
+		if (state == SudokuState.UNSOLVED)
 			state = SudokuState.UNSOLVABLE;
-		else if (sudokuSolves == 1)
-			state = SudokuState.SOLVED;
-		else 
-			state = SudokuState.MANY_SOLVES;
 	}
 	
 	public void complete(Sudoku other) {
@@ -185,26 +160,6 @@ public class Sudoku {
 		return state;
 	}
 
-	public static void main(String[] args) {
-		long start = System.currentTimeMillis();
-		String str2 = 
-				    "800000000"
-				  + "003600000"
-				  + "070090200"
-				  + "050007000"
-				  + "000045700"
-				  + "000100030"
-				  + "001000068"
-				  + "008500010"
-				  + "090000400";
-		
-		Sudoku sud = new Sudoku(str2);
-
-		sud.solve();
-		System.out.println(System.currentTimeMillis() - start);
-		System.out.println(sud.toString());
-		System.out.println(sud.getState());
-	}
 	
 	@Override
  	public String toString() {
