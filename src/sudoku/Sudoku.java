@@ -47,12 +47,27 @@ public class Sudoku {
 		}		
 	}
 	
+	public Sudoku(String str) {
+		this();
+		
+		str = str.replaceAll("\n+", "");
+		if (str.length() != 81)
+			throw new IllegalArgumentException("Wrong size of a string");
+		
+		for (int i = 0; i < 9; ++i)
+			for (int j = 0; j < 9; ++j) {
+				char ch = str.charAt(9 * i + j);
+				if (ch != '0') 
+					set(i, j, Character.getNumericValue(ch));
+			}
+	}
+	
 	public Sudoku(final Sudoku other) {
 		this();
 		
 		for (int i = 0; i < 81; ++i)
 			if (other.get(i).hasValue())
-				this.cells[i].setValue(other.get(i).getValue());
+				this.set(i, other.get(i).getValue());
 	}
 	
 	
@@ -86,7 +101,6 @@ public class Sudoku {
 	public void solve() {
 		if (getState() != SudokuState.UNSOLVED)
 			return;
-		
 
 		int minCellCountUndef = 10;
 		int minCellIndex = -1;
@@ -109,7 +123,9 @@ public class Sudoku {
 		for (int i = 1; i < 10; ++i)
 			if (cells[minCellIndex].canBe(i)) {
 				Sudoku subSudoku = new Sudoku(this);
+		
 				subSudoku.set(minCellIndex, i);
+				
 				subSudoku.solve();
 				sudokuList.add(subSudoku);
 				
@@ -169,9 +185,25 @@ public class Sudoku {
 		return state;
 	}
 
-	public static void main(String[] str) 
-	{
+	public static void main(String[] args) {
+		long start = System.currentTimeMillis();
+		String str2 = 
+				    "800000000"
+				  + "003600000"
+				  + "070090200"
+				  + "050007000"
+				  + "000045700"
+				  + "000100030"
+				  + "001000068"
+				  + "008500010"
+				  + "090000400";
 		
+		Sudoku sud = new Sudoku(str2);
+
+		sud.solve();
+		System.out.println(System.currentTimeMillis() - start);
+		System.out.println(sud.toString());
+		System.out.println(sud.getState());
 	}
 	
 	@Override

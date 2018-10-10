@@ -50,5 +50,14 @@ public class Block {
 		return numSet.size() != allNumbers;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+		for (Cell cell : cells)
+			str.append(cell.getValue());
+		
+		return str.toString();
+	}
+	
 	private List<Cell> cells;
 }

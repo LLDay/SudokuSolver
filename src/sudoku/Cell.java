@@ -35,8 +35,9 @@ public class Cell extends CellValueEvent {
 	}
 	
 	public void setValue(int someValue) {
-		//if (value != 0)
-		//	throw new IllegalStateException("Value has been defined");
+		// Sudoku is wrong
+		if (value != 0 && someValue != value) 
+			return;
 		
 		if (someValue < 1 || someValue > MAX_VALUE)
 			throw new IllegalArgumentException("Value must be from 1 to 9");
@@ -44,7 +45,7 @@ public class Cell extends CellValueEvent {
 		value = someValue;
 		defCount = MAX_VALUE;
 		
-		for (int i = 1; i < MAX_VALUE; ++i)
+		for (int i = 0; i < MAX_VALUE; ++i)
 			states[i] = CellValueState.DEFINE;
 	
 		super.event(someValue);
