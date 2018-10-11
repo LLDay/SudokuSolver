@@ -110,6 +110,7 @@ public class Sudoku {
 				break;
 			}
 
+		Sudoku firstSolved = null;
 		
 		for (int i = 1; i < 10; ++i)
 			if (cells[firstCellIndex].canBe(i)) {
@@ -117,27 +118,42 @@ public class Sudoku {
 		
 				subSudoku.set(firstCellIndex, i);
 				subSudoku.solve();
+			
+				if (subSudoku.getState() == SudokuState.SOLVED) {
+					
+					if (firstSolved == null) 
+						firstSolved = subSudoku;
+					else  
+						firstSolved.state = SudokuState.MANY_SOLVES;
+										
+					if (firstSolved.state == Sudoku.SudokuState.MANY_SOLVES) {
+						this.moveFrom(firstSolved);
+						return;
+					}
+				}
 				
-				if (subSudoku.getState() == SudokuState.SOLVED) 				
-					if (this.getState() == SudokuState.UNSOLVED) {
-						this.cells = subSudoku.cells;
-						this.blocks = subSudoku.blocks;
-						this.state = subSudoku.state;
-					}
-					else {
-						this.state = SudokuState.MANY_SOLVES;
-						break;
-					}
+				else if (subSudoku.getState() == SudokuState.MANY_SOLVES) {
+					this.moveFrom(subSudoku);
+					return;
+				}
 			}
+		
+		if (firstSolved != null) {
+			this.moveFrom(firstSolved);
+			return;
+		}
 		
 		if (state == SudokuState.UNSOLVED)
 			state = SudokuState.UNSOLVABLE;
 	}
 	
-	public void complete(Sudoku other) {
-		for (int i = 0; i < 81; ++i)
-			if (!cells[i].hasValue())
-				cells[i].setValue(other.get(i).getValue());
+	private void moveFrom(Sudoku other) {
+		if (this == other)
+			return; 
+		
+		this.blocks = other.blocks;
+		this.cells  = other.cells;
+		this.state  = other.state;
 	}
 	
 	public SudokuState getState() {
@@ -165,11 +181,14 @@ public class Sudoku {
  	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		
-		for (int i = 0; i < 9; ++i) {
+		for (int i = 0; i < 8; ++i) {
 			for (int j = 0; j < 9; ++j)
 				builder.append(cells[i * 9 + j].getValue());
 			builder.append('\n');
 		}
+		
+		for (int j = 0; j < 9; ++j)
+			builder.append(cells[72 + j].getValue());
 		
 		return builder.toString();
 	}
