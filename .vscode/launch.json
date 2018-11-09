@@ -1,0 +1,26 @@
+{
+	"configurations": [
+		{
+			"type": "java",
+			"name": "CodeLens (Launch) - Sudoku",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"console": "internalConsole",
+			"stopOnEntry": false,
+			"mainClass": "sudoku.Sudoku",
+			"args": "",
+			"projectName": "SudokuSolver"
+		},
+		{
+			"type": "java",
+			"name": "CodeLens (Launch) - SudokuApp",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"console": "internalConsole",
+			"stopOnEntry": false,
+			"mainClass": "gui.SudokuApp",
+			"args": "",
+			"projectName": "SudokuSolver"
+		}
+	]
+}

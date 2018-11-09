@@ -10,8 +10,7 @@ public class Sudoku {
 		UNSOLVED,
 		UNSOLVABLE,
 		MANY_SOLVES
-	}
-
+	};
 	
 	public Sudoku() {
 		blocks = new ArrayList<Block>();

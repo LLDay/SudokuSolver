@@ -1,11 +1,9 @@
 package sudoku;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
 
-class SudokuTest {
-	
+class SudokuTest {	
 	@Test
 	void creation() {
 		Sudoku sud1 = new Sudoku();
@@ -86,6 +84,8 @@ class SudokuTest {
 		assertEquals(sud2.getState(), Sudoku.SudokuState.UNSOLVABLE);
 		assertEquals(sud3.getState(), Sudoku.SudokuState.UNSOLVABLE);
 	}
+	
+	
 	
 	private String strEmpty = 
 			  "000000000\n"
