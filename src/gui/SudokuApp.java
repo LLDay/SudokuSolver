@@ -78,7 +78,7 @@ public class SudokuApp {
 						currentPanel.add(currentCell);
 					}
 				}
-		
+
 		info_panel = new JPanel();
 		frmSudoku.getContentPane().add(info_panel, BorderLayout.CENTER);
 		info_panel.setLayout(new BorderLayout(0, 0));
@@ -98,6 +98,6 @@ public class SudokuApp {
 
 		lblNewLabel = new JLabel("New label");
 		state_panel.add(lblNewLabel);
-	}
 
+	}
 }
