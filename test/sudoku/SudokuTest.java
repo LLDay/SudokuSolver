@@ -1,9 +1,12 @@
 package sudoku;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static sudoku.SudokuState.MANY_SOLVES;
+
 import org.junit.jupiter.api.Test;
 
-class SudokuTest {	
+class SudokuTest {
+
 	@Test
 	void creation() {
 		Sudoku sud1 = new Sudoku();
@@ -12,37 +15,31 @@ class SudokuTest {
 		
 		assertEquals(sud1.toString(), strEmpty);
 		assertEquals(sud2.toString(), sud3.toString());
-		assertThrows(IllegalArgumentException.class, () -> { new Sudoku(""); });
-		assertThrows(IllegalArgumentException.class, () -> { new Sudoku(strSud1.replaceAll("1", "a")); });
-		assertThrows(IllegalArgumentException.class, () -> { new Sudoku(strSud1 + "1"); });
+
+		assertThrows(IllegalArgumentException.class, () -> new Sudoku(""));
+		assertThrows(IllegalArgumentException.class, () -> new Sudoku(strSud1.replaceAll("1", "a")));
+		assertThrows(IllegalArgumentException.class, () -> new Sudoku(strSud1 + "1"));
 	}
 	
 	@Test
 	void solving() {
-		Sudoku sud1 = new Sudoku(strSud1);
-		Sudoku sud2 = new Sudoku(strSud2);
-		Sudoku sud3 = new Sudoku(strSud3);
-		
-		sud1.solve();
-		sud2.solve();
-		sud3.solve();
-		
-		assertEquals(sud1.getState(), Sudoku.SudokuState.SOLVED);
-		assertEquals(sud2.getState(), Sudoku.SudokuState.SOLVED);
-		assertEquals(sud3.getState(), Sudoku.SudokuState.SOLVED);
-		
-		assertEquals(sud1.toString(), strSud1Answer);
-		assertEquals(sud2.toString(), strSud2Answer);
-		assertEquals(sud3.toString(), strSud3Answer);		
+		Sudoku s1 = new Sudoku(strSud1).getSolve();
+		Sudoku s2 = new Sudoku(strSud2).getSolve();
+		Sudoku s3 = new Sudoku(strSud3).getSolve();
+
+		assertEquals(s1.getState(), SudokuState.SOLVED);
+		assertEquals(s2.getState(), SudokuState.SOLVED);
+		assertEquals(s3.getState(), SudokuState.SOLVED);
+
+		assertEquals(s1.toString(), strSud1Answer);
+		assertEquals(s2.toString(), strSud2Answer);
+		assertEquals(s3.toString(), strSud3Answer);
 	}
 
 	@Test
 	void manySolves() {
-		Sudoku sud1 = new Sudoku(strEmpty);
-		Sudoku sud2 = new Sudoku(strSud4);
-		
-		sud1.solve();
-		sud2.solve();
+		Sudoku sud1 = new Sudoku(strEmpty).getSolve();
+		Sudoku sud2 = new Sudoku(strSud4).getSolve();
 		
 		/*
 		Sud2 has 2 different solutions:
@@ -62,8 +59,8 @@ class SudokuTest {
 		How many sudoku puzzles have a several solutions..
 		*/
 		
-		assertEquals(sud1.getState(), Sudoku.SudokuState.MANY_SOLVES);
-		assertEquals(sud2.getState(), Sudoku.SudokuState.MANY_SOLVES);
+		assertEquals(sud1.getState(), MANY_SOLVES);
+		assertEquals(sud2.getState(), MANY_SOLVES);
 	}
 	
 	@Test
@@ -72,17 +69,13 @@ class SudokuTest {
 		String errSud2 = strSud2.replaceAll("000380200", "000387200");
 		String errSud3 = strSud3.replaceAll("090000400", "090020400");
 		
-		Sudoku sud1 = new Sudoku(errSud1);
-		Sudoku sud2 = new Sudoku(errSud2);
-		Sudoku sud3 = new Sudoku(errSud3);
+		Sudoku sud1 = new Sudoku(errSud1).getSolve();
+		Sudoku sud2 = new Sudoku(errSud2).getSolve();
+		Sudoku sud3 = new Sudoku(errSud3).getSolve();
 		
-		sud1.solve();
-		sud2.solve();
-		sud3.solve();
-		
-		assertEquals(sud1.getState(), Sudoku.SudokuState.UNSOLVABLE);
-		assertEquals(sud2.getState(), Sudoku.SudokuState.UNSOLVABLE);
-		assertEquals(sud3.getState(), Sudoku.SudokuState.UNSOLVABLE);
+		assertEquals(sud1.getState(), SudokuState.UNSOLVABLE);
+		assertEquals(sud2.getState(), SudokuState.UNSOLVABLE);
+		assertEquals(sud3.getState(), SudokuState.UNSOLVABLE);
 	}
 	
 	
@@ -110,7 +103,7 @@ class SudokuTest {
 			+ "000419005" 
 			+ "000080079";
 
-	private String strSud1Answer = 
+	private String strSud1Answer =
 			  "534678912\n"
 			+ "672195348\n"
 			+ "198342567\n"
@@ -120,8 +113,8 @@ class SudokuTest {
 			+ "961537284\n"
 			+ "287419635\n"
 			+ "345286179";
-	
-	private String strSud2 = 
+
+	private String strSud2 =
 					"000003000"
 			      + "008190367"
 			      + "069002001"
@@ -131,8 +124,8 @@ class SudokuTest {
 			      + "040051000"
 			      + "910000520"
 			      + "000040096";
-	
-	private String strSud2Answer = 
+
+	private String strSud2Answer =
 			      "751863942\n"
 			    + "428195367\n"
 			    + "369472851\n"
@@ -142,7 +135,7 @@ class SudokuTest {
 			    + "246951738\n"
 			    + "917638524\n"
 			    + "583247196";
-	
+
 	//The world's hardest sudoku
 	private String strSud3 = 
 			  "800000000"
@@ -154,8 +147,8 @@ class SudokuTest {
 			+ "001000068"
 			+ "008500010"
 			+ "090000400";
-	
-	private String strSud3Answer = 
+
+	private String strSud3Answer =
 			  "812753649\n"
 			+ "943682175\n"
 			+ "675491283\n"
@@ -165,8 +158,8 @@ class SudokuTest {
 			+ "521974368\n"
 			+ "438526917\n"
 			+ "796318452";
-	
-	private String strSud4 = 
+
+	private String strSud4 =
 			  "100080009"
 			+ "050601020"
 			+ "000503000"
