@@ -5,10 +5,10 @@ import java.util.List;
 
 import static sudoku.SudokuState.*;
 
-public class SudokuSolver extends Sudoku {
+class SudokuSolver extends Sudoku {
 
 	private SudokuSolver() {
-		blocks = new ArrayList<Block>();
+		blocks = new ArrayList<>();
 
 		for (int i = 0; i < 9; ++i) {
 			List<Cell> rowList 		= new ArrayList<>();
@@ -36,7 +36,7 @@ public class SudokuSolver extends Sudoku {
 		}
 	}
 
-	public SudokuSolver(final Sudoku other) {
+	SudokuSolver(final Sudoku other) {
 		this();
 
 		for (int i = 0; i < 81; ++i)
@@ -44,7 +44,7 @@ public class SudokuSolver extends Sudoku {
 				this.set(i, other.get(i).getValue());
 	}
 
-	public void solve() {
+	void solve() {
 		defineState();
 		if (getState() != UNSOLVED)
 			return;

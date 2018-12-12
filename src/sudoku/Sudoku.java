@@ -3,7 +3,7 @@ package sudoku;
 import java.util.ArrayList;
 import java.util.List;
 
-class Sudoku {
+public class Sudoku {
 
 	public Sudoku() {
 		cells = new ArrayList<>();
@@ -36,7 +36,11 @@ class Sudoku {
 				this.set(i, other.get(i).getValue());
 	}
 
+
 	public void set(int cellIndex, int value) {
+		if (value == 0)
+			return;
+
 		if (cellIndex > 80 || cellIndex < 0)
 			throw new IllegalArgumentException("Index must be from 0 to 80");
 
@@ -50,6 +54,7 @@ class Sudoku {
 		set(rowIndex * 9 + columnIndex, value);
 	}
 
+
 	public Cell get(int cellIndex) {
 		return cells.get(cellIndex);
 	}
@@ -61,6 +66,7 @@ class Sudoku {
 		return cells.get(row * 9 + column);
 	}
 
+
 	public Sudoku getSolve() {
 		SudokuSolver solver = new SudokuSolver(this);
 		solver.solve();
@@ -70,6 +76,7 @@ class Sudoku {
 	public SudokuState getState() {
 		return state;
 	}
+
 
 	protected void setState(SudokuState newState) {
 		state = newState;
@@ -81,7 +88,6 @@ class Sudoku {
 			this.state = other.state;
 		}
 	}
-
 
 	@Override
 	public String toString() {
@@ -100,6 +106,5 @@ class Sudoku {
 	}
 
 	private List<Cell> cells;
-
 	private SudokuState state;
 }

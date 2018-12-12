@@ -2,6 +2,8 @@ package sudoku;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sudoku.SudokuState.MANY_SOLVES;
+import static sudoku.SudokuState.SOLVED;
+import static sudoku.SudokuState.UNSOLVABLE;
 
 import org.junit.jupiter.api.Test;
 
@@ -27,9 +29,9 @@ class SudokuTest {
 		Sudoku s2 = new Sudoku(strSud2).getSolve();
 		Sudoku s3 = new Sudoku(strSud3).getSolve();
 
-		assertEquals(s1.getState(), SudokuState.SOLVED);
-		assertEquals(s2.getState(), SudokuState.SOLVED);
-		assertEquals(s3.getState(), SudokuState.SOLVED);
+		assertEquals(s1.getState(), SOLVED);
+		assertEquals(s2.getState(), SOLVED);
+		assertEquals(s3.getState(), SOLVED);
 
 		assertEquals(s1.toString(), strSud1Answer);
 		assertEquals(s2.toString(), strSud2Answer);
@@ -73,9 +75,9 @@ class SudokuTest {
 		Sudoku sud2 = new Sudoku(errSud2).getSolve();
 		Sudoku sud3 = new Sudoku(errSud3).getSolve();
 		
-		assertEquals(sud1.getState(), SudokuState.UNSOLVABLE);
-		assertEquals(sud2.getState(), SudokuState.UNSOLVABLE);
-		assertEquals(sud3.getState(), SudokuState.UNSOLVABLE);
+		assertEquals(sud1.getState(), UNSOLVABLE);
+		assertEquals(sud2.getState(), UNSOLVABLE);
+		assertEquals(sud3.getState(), UNSOLVABLE);
 	}
 	
 	
