@@ -7,113 +7,111 @@ import static sudoku.SudokuState.*;
 
 class SudokuSolver extends Sudoku {
 
-	private SudokuSolver() {
-		blocks = new ArrayList<>();
+    private SudokuSolver() {
+        blocks = new ArrayList<>();
 
-		for (int i = 0; i < 9; ++i) {
-			List<Cell> rowList 		= new ArrayList<>();
-			List<Cell> columnList 	= new ArrayList<>();
-			List<Cell> squaresList 	= new ArrayList<>();
+        for (int i = 0; i < 9; ++i) {
+            List<Cell> rowList = new ArrayList<>();
+            List<Cell> columnList = new ArrayList<>();
+            List<Cell> squaresList = new ArrayList<>();
 
-			for (int j = 0; j < 9; ++j)
-				rowList.add(super.get(9 * i + j));
+            for (int j = 0; j < 9; ++j)
+                rowList.add(super.get(9 * i + j));
 
-			for (int j = 0; j < 9; ++j)
-				columnList.add(super.get(9 * j + i));
+            for (int j = 0; j < 9; ++j)
+                columnList.add(super.get(9 * j + i));
 
-			for (int j = 0; j < 3; ++j) {
-				int startIndex = (i / 3) * 27 + (i % 3) * 3 + (9 * j);
-				for (int k = 0; k < 3; k++) {
-					squaresList.add(super.get(startIndex + k));
-				}
-			}
+            for (int j = 0; j < 3; ++j) {
+                int startIndex = (i / 3) * 27 + (i % 3) * 3 + (9 * j);
+                for (int k = 0; k < 3; k++) {
+                    squaresList.add(super.get(startIndex + k));
+                }
+            }
 
-			blocks.add(new Block(rowList));
-			blocks.add(new Block(columnList));
+            blocks.add(new Block(rowList));
+            blocks.add(new Block(columnList));
 
-			// Cells save this block
-			new Block(squaresList);
-		}
-	}
+            // Cells save this block
+            new Block(squaresList);
+        }
+    }
 
-	SudokuSolver(final Sudoku other) {
-		this();
+    SudokuSolver(final Sudoku other) {
+        this();
 
-		for (int i = 0; i < 81; ++i)
-			if (other.get(i).hasValue())
-				this.set(i, other.get(i).getValue());
-	}
+        for (int i = 0; i < 81; ++i)
+            if (other.get(i).hasValue())
+                this.set(i, other.get(i).getValue());
+    }
 
-	void solve() {
-		defineState();
-		if (getState() != UNSOLVED)
-			return;
+    void solve() {
+        defineState();
+        if (getState() != UNSOLVED)
+            return;
 
-		int undefCellIndex = getUndefinedCellIndex();
+        int undefCellIndex = getUndefinedCellIndex();
 
-		SudokuSolver firstSolved = null;
+        SudokuSolver firstSolved = null;
 
-		for (int i = 1; i < 10; ++i)
-			if (super.get(undefCellIndex).canBe(i)) {
-				SudokuSolver subSudoku = new SudokuSolver(this);
+        for (int i = 1; i < 10; ++i)
+            if (super.get(undefCellIndex).canBe(i)) {
+                SudokuSolver subSudoku = new SudokuSolver(this);
 
-				subSudoku.set(undefCellIndex, i);
-				subSudoku.solve();
+                subSudoku.set(undefCellIndex, i);
+                subSudoku.solve();
 
-				if (subSudoku.getState() == SOLVED) {
+                if (subSudoku.getState() == SOLVED) {
 
-					if (firstSolved == null)
-						firstSolved = subSudoku;
-					else
-						firstSolved.setState(MANY_SOLVES);
+                    if (firstSolved == null)
+                        firstSolved = subSudoku;
+                    else
+                        firstSolved.setState(MANY_SOLVES);
 
-					if (firstSolved.getState() == MANY_SOLVES) {
-						this.moveFrom(firstSolved);
-						return;
-					}
-				}
+                    if (firstSolved.getState() == MANY_SOLVES) {
+                        this.moveFrom(firstSolved);
+                        return;
+                    }
+                } else if (subSudoku.getState() == MANY_SOLVES) {
+                    this.moveFrom(subSudoku);
+                    return;
+                }
+            }
 
-				else if (subSudoku.getState() == MANY_SOLVES) {
-					this.moveFrom(subSudoku);
-					return;
-				}
-			}
+        if (firstSolved != null) {
+            this.moveFrom(firstSolved);
+            return;
+        }
 
-		if (firstSolved != null) {
-			this.moveFrom(firstSolved);
-			return;
-		}
+        if (getState() == UNSOLVED)
+            setState(UNSOLVABLE);
+    }
 
-		if (getState() == UNSOLVED)
-			setState(UNSOLVABLE);
-	}
+    private int getUndefinedCellIndex() {
+        for (int i = 0; i < 81; ++i)
+            if (!super.get(i).hasValue())
+                return i;
 
-	private int getUndefinedCellIndex() {
-		for (int i = 0; i < 81; ++i)
-			if (!super.get(i).hasValue())
-				return i;
+        return -1;
+    }
 
-		return -1;
-	}
+    private void defineState() {
+        if (getState() != UNSOLVED)
+            return;
 
-	private void defineState() {
-		if (getState() != UNSOLVED)
-			return;
+        int solvedBlocks = 0;
+        for (Block block : blocks) {
+            if (block.isSolved())
+                solvedBlocks++;
 
-		int solvedBlocks = 0;
-		for (Block block : blocks) {
-			if (block.isSolved())
-				solvedBlocks++;
+            if (block.isErr()) {
+                setState(UNSOLVABLE);
+                break;
+            }
+        }
 
-			if (block.isErr()) {
-				setState(UNSOLVABLE);
-				break;
-			}
-		}
+        if (solvedBlocks == 18)
+            setState(SOLVED);
+    }
 
-		if (solvedBlocks == 18)
-			setState(SOLVED);
-	}
-
-	private List<Block> blocks;
+    private List<Block> blocks;
 }

@@ -22,11 +22,14 @@ class Controller {
                 app.setCell(i, solve.get(i).getValue());
 
         switch (solve.getState()) {
-            case SOLVED: app.setState("Solved successfully");
+            case SOLVED:
+                app.setState("Solved successfully");
                 break;
-            case UNSOLVABLE: app.setState("There is no solutions");
+            case UNSOLVABLE:
+                app.setState("There is no solutions");
                 break;
-            case MANY_SOLVES: app.setState("There are several solutions");
+            case MANY_SOLVES:
+                app.setState("There are several solutions");
                 break;
         }
     }

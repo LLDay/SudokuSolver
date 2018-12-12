@@ -7,23 +7,23 @@ public class FocusPolicy extends FocusTraversalPolicy {
 
     private List<? extends Component> order;
 
-    public FocusPolicy(List<? extends Component> order) {
+    FocusPolicy(List<? extends Component> order) {
         this.order = order;
     }
 
     public Component getComponentAfter(Container focusCycleRoot,
                                        Component aComponent) {
-        int idx = (order.indexOf(aComponent) + 1) % order.size();
-        return order.get(idx);
+        int index = (order.indexOf(aComponent) + 1) % order.size();
+        return order.get(index);
     }
 
     public Component getComponentBefore(Container focusCycleRoot,
                                         Component aComponent) {
-        int idx = order.indexOf(aComponent) - 1;
-        if (idx < 0) {
-            idx = order.size() - 1;
+        int index = order.indexOf(aComponent) - 1;
+        if (index < 0) {
+            index = order.size() - 1;
         }
-        return order.get(idx);
+        return order.get(index);
     }
 
     public Component getDefaultComponent(Container focusCycleRoot) {
