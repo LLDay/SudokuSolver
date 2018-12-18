@@ -6,17 +6,17 @@ import java.util.List;
 class CellValuePublisher {
 
     CellValuePublisher() {
-        blocks = new ArrayList<>();
+        unions = new ArrayList<>();
     }
 
-    void connect(Block block) {
-        blocks.add(block);
+    void connect(CellUnion union) {
+        unions.add(union);
     }
 
     void event(int setValue) {
-        for (Block it : blocks)
+        for (CellUnion it : unions)
             it.exclude(setValue);
     }
 
-    private List<Block> blocks;
+    private List<CellUnion> unions;
 }

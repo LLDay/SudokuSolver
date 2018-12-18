@@ -3,43 +3,46 @@ package sudoku;
 import java.util.ArrayList;
 import java.util.List;
 
+import static sudoku.Properties.*;
 import static sudoku.SudokuState.*;
 
 class SudokuSolver extends Sudoku {
 
     private SudokuSolver() {
-        blocks = new ArrayList<>();
+        unions = new ArrayList<>();
 
-        for (int i = 0; i < 9; ++i) {
+        for (int i = 0; i < BOARD_WIDTH; ++i) {
             List<Cell> rowList = new ArrayList<>();
             List<Cell> columnList = new ArrayList<>();
             List<Cell> squaresList = new ArrayList<>();
 
-            for (int j = 0; j < 9; ++j)
-                rowList.add(super.get(9 * i + j));
+            for (int j = 0; j < BOARD_WIDTH; ++j)
+                rowList.add(super.get(BOARD_WIDTH * i + j));
 
-            for (int j = 0; j < 9; ++j)
-                columnList.add(super.get(9 * j + i));
+            for (int j = 0; j < BOARD_WIDTH; ++j)
+                columnList.add(super.get(BOARD_WIDTH * j + i));
 
-            for (int j = 0; j < 3; ++j) {
-                int startIndex = (i / 3) * 27 + (i % 3) * 3 + (9 * j);
-                for (int k = 0; k < 3; k++) {
+            for (int j = 0; j < BLOCK_WIDTH; ++j) {
+                int rowStartIndex = (i / BLOCK_WIDTH) * BLOCK_WIDTH * BOARD_WIDTH;
+                int columnStartIndex = (i % BLOCK_WIDTH) * BLOCK_WIDTH + (BOARD_WIDTH * j);
+                int startIndex = rowStartIndex + columnStartIndex;
+
+                for (int k = 0; k < BLOCK_WIDTH; k++) {
                     squaresList.add(super.get(startIndex + k));
                 }
             }
+            unions.add(new CellUnion(rowList));
+            unions.add(new CellUnion(columnList));
 
-            blocks.add(new Block(rowList));
-            blocks.add(new Block(columnList));
-
-            // Cells save this block
-            new Block(squaresList);
+            // Cells save this
+            new CellUnion(squaresList);
         }
     }
 
     SudokuSolver(final Sudoku other) {
         this();
 
-        for (int i = 0; i < 81; ++i)
+        for (int i = 0; i < CELL_NUMBER; ++i)
             if (other.get(i).hasValue())
                 this.set(i, other.get(i).getValue());
     }
@@ -53,7 +56,7 @@ class SudokuSolver extends Sudoku {
 
         SudokuSolver firstSolved = null;
 
-        for (int i = 1; i < 10; ++i)
+        for (int i = 1; i < BOARD_WIDTH + 1; ++i)
             if (super.get(undefCellIndex).canBe(i)) {
                 SudokuSolver subSudoku = new SudokuSolver(this);
 
@@ -87,7 +90,7 @@ class SudokuSolver extends Sudoku {
     }
 
     private int getUndefinedCellIndex() {
-        for (int i = 0; i < 81; ++i)
+        for (int i = 0; i < CELL_NUMBER; ++i)
             if (!super.get(i).hasValue())
                 return i;
 
@@ -98,20 +101,20 @@ class SudokuSolver extends Sudoku {
         if (getState() != UNSOLVED)
             return;
 
-        int solvedBlocks = 0;
-        for (Block block : blocks) {
-            if (block.isSolved())
-                solvedBlocks++;
+        int solvedUnions = 0;
+        for (CellUnion union : unions) {
+            if (union.isSolved())
+                solvedUnions++;
 
-            if (block.isErr()) {
+            if (union.isErr()) {
                 setState(UNSOLVABLE);
                 break;
             }
         }
 
-        if (solvedBlocks == 18)
+        if (solvedUnions == 2 * BOARD_WIDTH)
             setState(SOLVED);
     }
 
-    private List<Block> blocks;
+    private List<CellUnion> unions;
 }

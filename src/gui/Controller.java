@@ -2,6 +2,8 @@ package gui;
 
 import sudoku.Sudoku;
 
+import static sudoku.Properties.CELL_NUMBER;
+
 class Controller {
     private SudokuApp app;
 
@@ -13,11 +15,11 @@ class Controller {
     void actionSolve() {
         Sudoku sudoku = new Sudoku();
 
-        for (int i = 0; i < 81; i++)
+        for (int i = 0; i < CELL_NUMBER; i++)
             sudoku.set(i, app.getCell(i));
 
         Sudoku solve = sudoku.getSolve();
-        for (int i = 0; i < 81; i++)
+        for (int i = 0; i < CELL_NUMBER; i++)
             if (solve.get(i).hasValue())
                 app.setCell(i, solve.get(i).getValue());
 

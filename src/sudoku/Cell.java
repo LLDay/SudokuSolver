@@ -1,5 +1,7 @@
 package sudoku;
 
+import static sudoku.Properties.BOARD_WIDTH;
+
 public class Cell extends CellValuePublisher {
 
     public enum CellValueState {
@@ -10,9 +12,9 @@ public class Cell extends CellValuePublisher {
     Cell() {
         value = 0;
         defCount = 0;
-        states = new CellValueState[MAX_VALUE];
+        states = new CellValueState[BOARD_WIDTH];
 
-        for (int i = 0; i < MAX_VALUE; ++i)
+        for (int i = 0; i < BOARD_WIDTH; ++i)
             states[i] = CellValueState.UNDEFINE;
     }
 
@@ -24,13 +26,13 @@ public class Cell extends CellValuePublisher {
         if (value != 0 && someValue != value)
             return;
 
-        if (someValue < 1 || someValue > MAX_VALUE)
+        if (someValue < 1 || someValue > BOARD_WIDTH)
             throw new IllegalArgumentException("Value must be from 1 to 9");
 
         value = someValue;
-        defCount = MAX_VALUE;
+        defCount = BOARD_WIDTH;
 
-        for (int i = 0; i < MAX_VALUE; ++i)
+        for (int i = 0; i < BOARD_WIDTH; ++i)
             states[i] = CellValueState.DEFINE;
 
         super.event(someValue);
@@ -48,7 +50,7 @@ public class Cell extends CellValuePublisher {
     }
 
     void exclude(int excludeValue) {
-        if (excludeValue < 1 || excludeValue > MAX_VALUE)
+        if (excludeValue < 1 || excludeValue > BOARD_WIDTH)
             throw new IllegalArgumentException("Value must be from 1 to 9");
 
         if (states[excludeValue - 1] != CellValueState.DEFINE) {
@@ -56,15 +58,15 @@ public class Cell extends CellValuePublisher {
             ++defCount;
         }
 
-        if (defCount == 8)
+        if (defCount == BOARD_WIDTH - 1)
             attemptToDef();
     }
 
     private void attemptToDef() {
-        if (hasValue() || defCount != 8)
+        if (hasValue() || defCount != BOARD_WIDTH - 1)
             return;
 
-        for (int i = 0; i < MAX_VALUE; ++i)
+        for (int i = 0; i < BOARD_WIDTH; ++i)
             if (states[i] != CellValueState.DEFINE) {
                 setValue(i + 1);
                 break;
@@ -79,6 +81,4 @@ public class Cell extends CellValuePublisher {
     private int value;
     private int defCount;
     private CellValueState[] states;
-
-    private static int MAX_VALUE = 9;
 }

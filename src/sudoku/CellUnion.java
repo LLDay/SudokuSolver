@@ -4,15 +4,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static sudoku.Properties.BOARD_WIDTH;
 
-class Block {
-    Block(List<Cell> cells) {
+
+class CellUnion {
+    CellUnion(List<Cell> cells) {
         if (cells.size() != 9)
             throw new IllegalArgumentException("A list must have 9 elements");
 
         this.cells = cells;
 
-        for (int i = 0; i < 9; ++i)
+        for (int i = 0; i < BOARD_WIDTH; ++i)
             this.cells.get(i).connect(this);
     }
 
