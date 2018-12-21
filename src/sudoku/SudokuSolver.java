@@ -22,12 +22,12 @@ class SudokuSolver extends Sudoku {
             for (int j = 0; j < BOARD_WIDTH; ++j)
                 columnList.add(super.get(BOARD_WIDTH * j + i));
 
-            for (int j = 0; j < BLOCK_WIDTH; ++j) {
-                int rowStartIndex = (i / BLOCK_WIDTH) * BLOCK_WIDTH * BOARD_WIDTH;
-                int columnStartIndex = (i % BLOCK_WIDTH) * BLOCK_WIDTH + (BOARD_WIDTH * j);
+            for (int j = 0; j < SECTOR_WIDTH; ++j) {
+                int rowStartIndex = (i / SECTOR_WIDTH) * SECTOR_WIDTH * BOARD_WIDTH;
+                int columnStartIndex = (i % SECTOR_WIDTH) * SECTOR_WIDTH + (BOARD_WIDTH * j);
                 int startIndex = rowStartIndex + columnStartIndex;
 
-                for (int k = 0; k < BLOCK_WIDTH; k++) {
+                for (int k = 0; k < SECTOR_WIDTH; k++) {
                     squaresList.add(super.get(startIndex + k));
                 }
             }

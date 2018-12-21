@@ -8,7 +8,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
-import static sudoku.Properties.BLOCK_WIDTH;
+import static sudoku.Properties.SECTOR_WIDTH;
 import static sudoku.Properties.BOARD_WIDTH;
 
 public class SudokuApp {
@@ -40,26 +40,26 @@ public class SudokuApp {
         frmSudoku.getContentPane().setLayout(new BorderLayout(0, 3));
 
         JPanel sudoku_panel = new JPanel();
-        sudoku_panel.setLayout(new GridLayout(BLOCK_WIDTH, BLOCK_WIDTH, 0, 0));
+        sudoku_panel.setLayout(new GridLayout(SECTOR_WIDTH, SECTOR_WIDTH, 0, 0));
 
         frmSudoku.getContentPane().add(sudoku_panel, BorderLayout.NORTH);
 
         for (int i = 0; i < BOARD_WIDTH; i++) {
             JPanel panel = new JPanel();
             panel.setBorder(new LineBorder(Color.black, 2));
-            panel.setLayout(new GridLayout(BLOCK_WIDTH, BLOCK_WIDTH, 0, 0));
+            panel.setLayout(new GridLayout(SECTOR_WIDTH, SECTOR_WIDTH, 0, 0));
             sudoku_panel.add(panel);
         }
         cellList = new ArrayList<>();
 
         //provide correct tab order
-        for (int rowBlock = 0; rowBlock < BLOCK_WIDTH; rowBlock++)
-            for (int i = 0; i < BLOCK_WIDTH; i++)
-                for (int columnBlock = 0; columnBlock < BLOCK_WIDTH; columnBlock++) {
+        for (int rowBlock = 0; rowBlock < SECTOR_WIDTH; rowBlock++)
+            for (int i = 0; i < SECTOR_WIDTH; i++)
+                for (int columnBlock = 0; columnBlock < SECTOR_WIDTH; columnBlock++) {
                     JPanel currentPanel = (JPanel) sudoku_panel
-                            .getComponent(rowBlock * BLOCK_WIDTH + columnBlock);
+                            .getComponent(rowBlock * SECTOR_WIDTH + columnBlock);
 
-                    for (int j = 0; j < BLOCK_WIDTH; ++j) {
+                    for (int j = 0; j < SECTOR_WIDTH; ++j) {
                         SudokuCell currentCell = new SudokuCell();
                         cellList.add(currentCell);
                         currentPanel.add(currentCell);
